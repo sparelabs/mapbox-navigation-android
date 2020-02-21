@@ -1,6 +1,5 @@
 package com.mapbox.navigation.core
 
-import android.app.NotificationManager
 import android.content.Context
 import android.location.Location
 import com.mapbox.android.core.location.LocationEngine
@@ -19,18 +18,17 @@ import com.mapbox.navigation.core.directions.session.RoutesRequestCallback
 import com.mapbox.navigation.core.fasterroute.FasterRouteDetector
 import com.mapbox.navigation.core.fasterroute.FasterRouteObserver
 import com.mapbox.navigation.core.module.NavigationModuleProvider
+import com.mapbox.navigation.core.trip.createContext
 import com.mapbox.navigation.core.trip.service.TripService
 import com.mapbox.navigation.core.trip.session.TripSession
-import com.mapbox.navigation.utils.extensions.inferDeviceLocale
 import com.mapbox.navigation.utils.timer.MapboxTimer
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.slot
-import io.mockk.unmockkObject
+import io.mockk.unmockkAll
 import io.mockk.verify
-import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.junit.After
@@ -44,9 +42,8 @@ import org.junit.Test
 class MapboxNavigationTest {
 
     private val accessToken = "pk.1234"
-    private val context: Context = mockk(relaxed = true)
-    private val applicationContext: Context = mockk(relaxed = true)
-    private val locationEngine: LocationEngine = mockk()
+    private lateinit var mockedContext: Context
+    private val locationEngine: LocationEngine = mockk(relaxed = true)
     private val locationEngineRequest: LocationEngineRequest = mockk()
     private val directionsSession: DirectionsSession = mockk(relaxUnitFun = true)
     private val tripSession: TripSession = mockk(relaxUnitFun = true)
@@ -58,7 +55,7 @@ class MapboxNavigationTest {
     private val routeOptions: RouteOptions = provideDefaultRouteOptionsBuilder().build()
     private val fasterRouteObserver: FasterRouteObserver = mockk(relaxUnitFun = true)
     private val mapboxTimer: MapboxTimer = mockk(relaxUnitFun = true)
-    private val routes: List<DirectionsRoute> = listOf(mockk())
+    private val routes: List<DirectionsRoute> = listOf(mockk(relaxed = true))
     private val routeProgress: RouteProgress = mockk(relaxed = true)
 
     private lateinit var delayLambda: () -> Unit
@@ -74,6 +71,7 @@ class MapboxNavigationTest {
 
     @Before
     fun setUp() {
+        mockedContext = createContext("com.mapbox.navigation.core")
         mockkObject(NavigationModuleProvider)
         val hybridRouter: Router = mockk(relaxUnitFun = true)
         every {
@@ -84,11 +82,6 @@ class MapboxNavigationTest {
         } returns hybridRouter
 
         mockkObject(NavigationComponentProvider)
-
-        every { context.inferDeviceLocale() } returns Locale.US
-        every { context.applicationContext } returns applicationContext
-        val notificationManager = mockk<NotificationManager>()
-        every { applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) } returns notificationManager
 
         mockLocation()
         mockMapboxTimer()
@@ -108,7 +101,7 @@ class MapboxNavigationTest {
 
         mapboxNavigation =
             MapboxNavigation(
-                context,
+                mockedContext,
                 accessToken,
                 navigationOptions,
                 locationEngine,
@@ -215,7 +208,7 @@ class MapboxNavigationTest {
     private fun mockTripService() {
         every {
             NavigationComponentProvider.createTripService(
-                applicationContext,
+                    mockedContext.applicationContext,
                 any()
             )
         } returns tripService
@@ -270,7 +263,6 @@ class MapboxNavigationTest {
 
     @After
     fun tearDown() {
-        unmockkObject(NavigationModuleProvider)
-        unmockkObject(NavigationComponentProvider)
+        unmockkAll()
     }
 }
