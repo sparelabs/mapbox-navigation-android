@@ -91,6 +91,7 @@ public class NavigationCamera implements LifecycleObserver {
   private int trackingCameraMode = NAVIGATION_TRACKING_MODE_GPS;
   private boolean isCameraResetting;
   private CameraAnimationDelegate animationDelegate;
+  private Camera camera;
 
   private RouteProgressObserver routeProgressObserver = new RouteProgressObserver() {
     @Override
@@ -325,6 +326,10 @@ public class NavigationCamera implements LifecycleObserver {
    */
   public void addProgressChangeListener(MapboxNavigation navigation) {
     this.navigation = navigation;
+    // SBNOTE: I don't think the line below is still necessary because
+    // startNavigation() in NavigationView will set a DynamicCamera
+    // by default. I don't think this code would be reached with a null
+    // camera reference.
     /*navigation.setCameraEngine(new DynamicCamera(mapboxMap));*/
     navigation.registerRouteProgressObserver(routeProgressObserver);
   }
@@ -460,11 +465,10 @@ public class NavigationCamera implements LifecycleObserver {
   }
 
   private void animateCameraForRouteOverview(RouteInformation routeInformation, int[] padding) {
-    /*Camera cameraEngine = navigation.getCameraEngine();
-    List<Point> routePoints = cameraEngine.overview(routeInformation);
+    List<Point> routePoints = camera.overview(routeInformation);
     if (!routePoints.isEmpty()) {
       animateMapboxMapForRouteOverview(padding, routePoints);
-    }*/
+    }
   }
 
   private void animateMapboxMapForRouteOverview(int[] padding, List<Point> routePoints) {
@@ -536,7 +540,7 @@ public class NavigationCamera implements LifecycleObserver {
 
   private void resetWith(@TrackingMode int trackingMode) {
     updateIsResetting(true);
-    /*resetDynamicCamera(navigation.getCameraEngine());*/
+    resetDynamicCamera(camera);
     updateCameraTrackingMode(trackingMode);
   }
 
@@ -547,19 +551,17 @@ public class NavigationCamera implements LifecycleObserver {
   }
 
   private void adjustCameraForReset(RouteInformation routeInformation) {
-    /*Camera camera = navigation.getCameraEngine();
     float tilt = (float) camera.tilt(routeInformation);
     double zoom = camera.zoom(routeInformation);
     locationComponent.zoomWhileTracking(zoom, getZoomAnimationDuration(zoom), new ResetCancelableCallback(this));
-    locationComponent.tiltWhileTracking(tilt, getTiltAnimationDuration(tilt));*/
+    locationComponent.tiltWhileTracking(tilt, getTiltAnimationDuration(tilt));
   }
 
   private void adjustCameraFromLocation(RouteInformation routeInformation) {
-    /*Camera camera = navigation.getCameraEngine();
     float tilt = (float) camera.tilt(routeInformation);
     double zoom = camera.zoom(routeInformation);
     locationComponent.zoomWhileTracking(zoom, getZoomAnimationDuration(zoom));
-    locationComponent.tiltWhileTracking(tilt, getTiltAnimationDuration(tilt));*/
+    locationComponent.tiltWhileTracking(tilt, getTiltAnimationDuration(tilt));
   }
 
   private long getZoomAnimationDuration(double zoom) {
@@ -584,5 +586,9 @@ public class NavigationCamera implements LifecycleObserver {
           NAVIGATION_TRACKING_MODE_NONE
   })
   public @interface TrackingMode {
+  }
+
+  public void setCamera(Camera camera) {
+    this.camera = camera;
   }
 }

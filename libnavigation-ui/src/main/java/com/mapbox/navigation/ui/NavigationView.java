@@ -37,6 +37,8 @@ import com.mapbox.navigation.base.route.Router;
 import com.mapbox.navigation.base.typedef.TimeFormatType;
 import com.mapbox.navigation.core.MapboxDistanceFormatter;
 import com.mapbox.navigation.core.MapboxNavigation;
+import com.mapbox.navigation.ui.camera.Camera;
+import com.mapbox.navigation.ui.camera.DynamicCamera;
 import com.mapbox.navigation.ui.camera.NavigationCamera;
 import com.mapbox.navigation.ui.instruction.ImageCreator;
 import com.mapbox.navigation.ui.instruction.InstructionView;
@@ -635,6 +637,12 @@ public class NavigationView extends CoordinatorLayout implements LifecycleOwner,
     navigationViewModel.initialize(options);
     initializeNavigationListeners(options, navigationViewModel);
     setupNavigationMapboxMap(options);
+
+    if(options.camera() == null) {
+      navigationMap.setCamera(new DynamicCamera(navigationMap.retrieveMap()));
+    } else {
+      navigationMap.setCamera(options.camera());
+    }
 
     if (!isSubscribed) {
       initializeClickListeners();
