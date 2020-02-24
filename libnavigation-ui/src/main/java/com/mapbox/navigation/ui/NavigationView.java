@@ -41,6 +41,7 @@ import com.mapbox.navigation.ui.camera.NavigationCamera;
 import com.mapbox.navigation.ui.instruction.ImageCreator;
 import com.mapbox.navigation.ui.instruction.InstructionView;
 import com.mapbox.navigation.ui.instruction.NavigationAlertView;
+import com.mapbox.navigation.ui.junction.JunctionView;
 import com.mapbox.navigation.ui.map.NavigationMapboxMap;
 import com.mapbox.navigation.ui.map.NavigationMapboxMapInstanceState;
 import com.mapbox.navigation.ui.map.WayNameView;
@@ -76,6 +77,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleOwner,
   private static final String MAP_INSTANCE_STATE_KEY = "navgation_mapbox_map_instance_state";
   private static final int INVALID_STATE = 0;
   private MapView mapView;
+  private JunctionView junctionView;
   private InstructionView instructionView;
   private SummaryBottomSheet summaryBottomSheet;
   private BottomSheetBehavior summaryBehavior;
@@ -276,6 +278,16 @@ public class NavigationView extends CoordinatorLayout implements LifecycleOwner,
   @Override
   public void hideRecenterBtn() {
     recenterBtn.hide();
+  }
+
+  @Override
+  public void showJunctionView() {
+    junctionView.show();
+  }
+
+  @Override
+  public void hideJunctionView() {
+    junctionView.hide();
   }
 
   @Override
@@ -522,6 +534,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleOwner,
 
   private void bind() {
     mapView = findViewById(R.id.navigationMapView);
+    junctionView = findViewById(R.id.junctionView);
     instructionView = findViewById(R.id.instructionView);
     ViewCompat.setElevation(instructionView, 10);
     summaryBottomSheet = findViewById(R.id.summaryBottomSheet);
@@ -710,6 +723,10 @@ public class NavigationView extends CoordinatorLayout implements LifecycleOwner,
    * method calls based on the {@link androidx.lifecycle.LiveData} updates.
    */
   private void subscribeViewModels() {
+    MapboxNavigation navigation = retrieveMapboxNavigation();
+    if (navigation != null) {
+      junctionView.subscribe(this, navigation);
+    }
     instructionView.subscribe(this, navigationViewModel);
     summaryBottomSheet.subscribe(this, navigationViewModel);
 
