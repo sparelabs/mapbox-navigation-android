@@ -14,19 +14,17 @@ import static com.mapbox.core.constants.Constants.PRECISION_6;
 
 class TestRouteProgressBuilder {
 
-  final double ONE_SECOND_IN_MILLISECONDS = 1000.0;
-
   RouteProgress buildTestRouteProgress(DirectionsRoute route,
                                        double stepDistanceRemaining,
                                        double legDistanceRemaining,
                                        double distanceRemaining,
                                        int stepIndex,
                                        int legIndex) {
-    double legDurationRemaining = route.legs().get(0).duration();
+    final double legDurationRemaining = route.legs().get(0).duration();
     List<LegStep> steps = route.legs().get(legIndex).steps();
     LegStep currentStep = steps.get(stepIndex);
     String currentStepGeometry = currentStep.geometry();
-    List<Point> currentStepPoints = buildStepPointsFromGeometry(currentStepGeometry);
+    final List<Point> currentStepPoints = buildStepPointsFromGeometry(currentStepGeometry);
     int upcomingStepIndex = stepIndex + 1;
     List<Point> upcomingStepPoints = null;
     LegStep upcomingStep = null;
@@ -45,7 +43,7 @@ class TestRouteProgressBuilder {
     stepProgressBuilder.distanceTraveled(distanceTraveled);
     stepProgressBuilder.fractionTraveled((float)(distanceTraveled / currentStep.distance()));
     stepProgressBuilder.distanceRemaining((float)stepDistanceRemaining);
-    stepProgressBuilder.durationRemaining((long) (legDurationRemaining  / ONE_SECOND_IN_MILLISECONDS));
+    stepProgressBuilder.durationRemaining((long) (legDurationRemaining  / 1000.0));
 
     double routeLegDistanceTraveled = route.legs().get(0).distance() - legDistanceRemaining;
     RouteLegProgress.Builder legProgressBuilder = new RouteLegProgress.Builder();
