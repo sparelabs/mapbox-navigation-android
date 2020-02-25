@@ -22,7 +22,7 @@ class MapboxDistanceFormatter(private val context: Context, private val unitType
 
     // These values are in meters.
     private val smallDistanceUpperThreshold = 400.0
-    private val mediumDistanceLoserThreshold = 401.0
+    private val mediumDistanceLowerThreshold = 401.0
     private val mediumDistanceUpperThreshold = 10000.0
 
     private val smallUnit = when (unitType) {
@@ -80,7 +80,7 @@ class MapboxDistanceFormatter(private val context: Context, private val unitType
             in 0.0..smallDistanceUpperThreshold -> {
                 getDistanceAndSuffixForSmallUnit(distance)
             }
-            in mediumDistanceLoserThreshold..mediumDistanceUpperThreshold -> {
+            in mediumDistanceLowerThreshold..mediumDistanceUpperThreshold -> {
                 getDistanceAndSuffixForLargeUnit(distance, 1)
             }
             else -> {
