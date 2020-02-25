@@ -15,13 +15,10 @@ import com.mapbox.navigation.utils.extensions.inferDeviceLocale
 import com.mapbox.turf.TurfConstants
 import com.mapbox.turf.TurfConversion
 import java.text.NumberFormat
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
-class MapboxDistanceFormatter(
-        private val context: Context,
-        private val unitType: String,
-        private val roundingIncrement: Int): DistanceFormatter {
+class MapboxDistanceFormatter(private val context: Context, private val unitType: String, private val roundingIncrement: Int) : DistanceFormatter {
 
     // These values are in meters.
     private val smallDistanceUpperThreshold = 400.0
@@ -58,7 +55,7 @@ class MapboxDistanceFormatter(
                 apply { this.roundingIncrement = roundingIncrement }
 
         fun build(): MapboxDistanceFormatter {
-            val unitTypeToUse = if(unitType.isNullOrEmpty()) {
+            val unitTypeToUse = if (unitType.isNullOrEmpty()) {
                 context.inferDeviceLocale().getUnitTypeForLocale()
             } else {
                 unitType!!
@@ -79,7 +76,7 @@ class MapboxDistanceFormatter(
      * relative size of .65 times the size of the number
      */
     override fun formatDistance(distance: Double): SpannableString {
-        val distanceAndSuffix = when(distance) {
+        val distanceAndSuffix = when (distance) {
             in 0.0..smallDistanceUpperThreshold -> {
                 getDistanceAndSuffixForSmallUnit(distance)
             }
