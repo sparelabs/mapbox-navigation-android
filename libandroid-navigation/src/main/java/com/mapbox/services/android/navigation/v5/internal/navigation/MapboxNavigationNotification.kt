@@ -45,6 +45,11 @@ import java.util.Calendar
  */
 internal class MapboxNavigationNotification : NavigationNotification {
 
+    var currentManeuverType: String? = null
+        private set
+    var currentManeuverModifier: String? = null
+        private set
+
     private var notificationManager: NotificationManager? = null
     private lateinit var notification: Notification
     private var collapsedNotificationRemoteViews: RemoteViews? = null
@@ -53,8 +58,6 @@ internal class MapboxNavigationNotification : NavigationNotification {
     private var currentDistanceText: SpannableString? = null
     private var distanceFormatter: DistanceFormatter? = null
     private var instructionText: String? = null
-    private var currentManeuverType: String? = null
-    private var currentManeuverModifier: String? = null
     private var isTwentyFourHourFormat: Boolean = false
     private var etaFormat: String = ""
     private val applicationContext: Context
@@ -99,7 +102,7 @@ internal class MapboxNavigationNotification : NavigationNotification {
     }
 
     // Package private (no modifier) for testing purposes
-    fun generateArrivalTime(routeProgress: RouteProgress): String? =
+    fun generateArrivalTime(routeProgress: RouteProgress, time: Calendar = Calendar.getInstance()): String? =
             ifNonNull(
                     mapboxNavigation,
                     routeProgress.currentLegProgress()
@@ -107,8 +110,7 @@ internal class MapboxNavigationNotification : NavigationNotification {
                 val options = mapboxNavigation.options()
                 val legDurationRemaining = currentLegProgress.durationRemaining() ?: 0.0
                 val timeFormatType = options.timeFormatType()
-                val arrivalTime =
-                        formatTime(Calendar.getInstance(), legDurationRemaining, timeFormatType, isTwentyFourHourFormat)
+                val arrivalTime = formatTime(time, legDurationRemaining, timeFormatType, isTwentyFourHourFormat)
                 String.format(etaFormat, arrivalTime)
             }
 
@@ -332,7 +334,7 @@ internal class MapboxNavigationNotification : NavigationNotification {
         return !TextUtils.equals(currentManeuverType, previousManeuverType) || !TextUtils.equals(currentManeuverModifier, previousManeuverModifier)
     }
 
-    private fun getManeuverBitmap(maneuverType: String, maneuverModifier: String?, drivingSide: String, roundaboutAngle: Float): Bitmap {
+    fun getManeuverBitmap(maneuverType: String, maneuverModifier: String?, drivingSide: String, roundaboutAngle: Float): Bitmap {
         val maneuver = when {
             MANEUVER_TYPES_WITH_NULL_MODIFIERS.contains(maneuverType) -> Pair(maneuverType, null)
             !STEP_MANEUVER_TYPE_ARRIVE.contentEquals(maneuverType) && maneuverModifier != null -> Pair(null, maneuverModifier)

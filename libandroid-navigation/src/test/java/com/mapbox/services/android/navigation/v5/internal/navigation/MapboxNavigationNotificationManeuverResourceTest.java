@@ -9,6 +9,8 @@ import android.content.res.Resources;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mapbox.api.directions.v5.DirectionsAdapterFactory;
+import com.mapbox.api.directions.v5.models.BannerInstructions;
+import com.mapbox.api.directions.v5.models.BannerText;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.LegStep;
@@ -24,6 +26,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.mapbox.services.android.navigation.v5.navigation.NavigationConstants.STEP_MANEUVER_MODIFIER_LEFT;
 import static com.mapbox.services.android.navigation.v5.navigation.NavigationConstants.STEP_MANEUVER_MODIFIER_RIGHT;
@@ -41,8 +44,11 @@ import static com.mapbox.services.android.navigation.v5.navigation.NavigationCon
 import static com.mapbox.services.android.navigation.v5.navigation.NavigationConstants.STEP_MANEUVER_TYPE_OFF_RAMP;
 import static com.mapbox.services.android.navigation.v5.navigation.NavigationConstants.STEP_MANEUVER_TYPE_ROUNDABOUT;
 import static com.mapbox.services.android.navigation.v5.navigation.NavigationConstants.STEP_MANEUVER_TYPE_TURN;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -72,7 +78,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertTrue(mapboxNavigationNotification.getCurrentManeuverType() != null);
   }
 
   @Test
@@ -84,7 +90,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_TURN, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -96,7 +102,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ARRIVE, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -108,7 +114,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ARRIVE, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -120,7 +126,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ARRIVE, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -132,7 +138,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_DEPART, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -144,7 +150,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_DEPART, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -156,7 +162,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_DEPART, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -168,7 +174,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_TURN, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -180,7 +186,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_TURN, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -192,7 +198,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_TURN, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -204,7 +210,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_TURN, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -216,7 +222,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_TURN, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -228,7 +234,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_TURN, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -240,7 +246,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_MERGE, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -252,7 +258,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_MERGE, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -264,7 +270,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_OFF_RAMP, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -276,7 +282,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_OFF_RAMP, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -288,7 +294,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_OFF_RAMP, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -300,7 +306,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_OFF_RAMP, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -312,7 +318,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_FORK, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -324,7 +330,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_FORK, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -336,7 +342,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_FORK, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -348,7 +354,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_FORK, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -360,7 +366,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_FORK, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -372,7 +378,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_FORK, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -384,7 +390,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_END_OF_ROAD, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -396,7 +402,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_END_OF_ROAD, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -408,7 +414,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -420,7 +426,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -432,7 +438,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -444,7 +450,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -456,7 +462,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -468,7 +474,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -480,7 +486,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -492,7 +498,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -504,7 +510,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -516,7 +522,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -528,7 +534,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -540,7 +546,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -552,7 +558,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -564,7 +570,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -576,7 +582,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_ROUNDABOUT, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   @Test
@@ -588,7 +594,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
     mapboxNavigationNotification.updateNotificationViews(mockedRouteProgress);
 
-    assertTrue(mapboxNavigationNotification.retrieveCurrentManeuverId() != 0);
+    assertEquals(STEP_MANEUVER_TYPE_MERGE, mapboxNavigationNotification.getCurrentManeuverType());
   }
 
   private MapboxNavigationNotification buildMapboxNavigationNotification() {
@@ -599,7 +605,7 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
             mockedMapboxNavigation, mockedNotification);
 
     MapboxNavigationNotification spyNotification = Mockito.spy(notification);
-    doReturn(null).when(spyNotification).getManeuverBitmap(anyInt());
+    doReturn(null).when(spyNotification).getManeuverBitmap(anyString(), anyString(), anyString(), anyFloat());
     return spyNotification;
   }
 
@@ -629,6 +635,23 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
     RouteProgress mockedRouteProgress = mock(RouteProgress.class, RETURNS_DEEP_STUBS);
     when(mockedRouteProgress.currentLegProgress().upComingStep()).thenReturn(step);
     return mockedRouteProgress;
+//    when(Objects.requireNonNull(mockedRouteProgress.currentLegProgress()).upComingStep()).thenReturn(step);
+//
+//    return mockedRouteProgress.toBuilder()
+//            .bannerInstruction(buildBannerInstructions(step.maneuver().type(),
+//                    step.maneuver().modifier()))
+//            .build();
+  }
+
+  private BannerInstructions buildBannerInstructions(String maneuverType, String maneuverModifier) {
+    BannerText bannerText = mock(BannerText.class);
+    when(bannerText.text()).thenReturn("mock text");
+    when(bannerText.type()).thenReturn(maneuverType);
+    when(bannerText.modifier()).thenReturn(maneuverModifier);
+    return BannerInstructions.builder()
+            .primary(bannerText)
+            .distanceAlongGeometry(0.3f)
+            .build();
   }
 
   private LegStep buildLegStep(String type, String modifier, String drivingSide) {
