@@ -110,8 +110,10 @@ public class RecenterButton extends CardView implements NavigationButton {
   }
 
   private void clearListeners() {
-    multiOnClickListener.clearListeners();
-    multiOnClickListener = null;
+    if (multiOnClickListener !== null) {
+      multiOnClickListener.clearListeners();
+      multiOnClickListener = null;
+    }
     setOnClickListener(null);
   }
 
