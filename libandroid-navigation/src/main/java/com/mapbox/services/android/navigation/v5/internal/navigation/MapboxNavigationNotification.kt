@@ -123,8 +123,10 @@ internal class MapboxNavigationNotification : NavigationNotification {
             updateViewsWithArrival(formattedTime)
         }
         routeProgress.bannerInstruction?.let { bannerInstructions ->
-            updateManeuverImage(bannerInstructions, routeProgress.currentLegProgress?.upComingStep?.drivingSide()
-                    ?: return@let)
+            if (updateManeuverState(bannerInstructions)) {
+                updateManeuverImage(bannerInstructions.primary().degrees()?.toFloat() ?: 0f, routeProgress.currentLegProgress?.upComingStep?.drivingSide()
+                        ?: return@let)
+            }
         }
     }
 
@@ -312,15 +314,11 @@ internal class MapboxNavigationNotification : NavigationNotification {
         expandedNotificationRemoteViews?.setTextViewText(R.id.notificationArrivalText, time)
     }
 
-    private fun updateManeuverImage(bannerInstruction: BannerInstructions, drivingSide: String) {
-        if (updateManeuverState(bannerInstruction)) {
-
-            getManeuverBitmap(currentManeuverType ?: "",
-                    currentManeuverModifier, drivingSide,
-                    bannerInstruction.primary().degrees()?.toFloat() ?: 0f).let { bitmap ->
-                collapsedNotificationRemoteViews?.setImageViewBitmap(R.id.maneuverImage, bitmap)
-                expandedNotificationRemoteViews?.setImageViewBitmap(R.id.maneuverImage, bitmap)
-            }
+    private fun updateManeuverImage(roundaboutAngle: Float, drivingSide: String) {
+        getManeuverBitmap(currentManeuverType ?: "",
+                currentManeuverModifier, drivingSide, roundaboutAngle).let { bitmap ->
+            collapsedNotificationRemoteViews?.setImageViewBitmap(R.id.maneuverImage, bitmap)
+            expandedNotificationRemoteViews?.setImageViewBitmap(R.id.maneuverImage, bitmap)
         }
     }
 

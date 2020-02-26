@@ -633,21 +633,23 @@ public class MapboxNavigationNotificationManeuverResourceTest extends BaseTest {
 
   private RouteProgress buildMockedRouteProgress(LegStep step) {
     RouteProgress mockedRouteProgress = mock(RouteProgress.class, RETURNS_DEEP_STUBS);
-    when(mockedRouteProgress.currentLegProgress().upComingStep()).thenReturn(step);
-    return mockedRouteProgress;
-//    when(Objects.requireNonNull(mockedRouteProgress.currentLegProgress()).upComingStep()).thenReturn(step);
-//
-//    return mockedRouteProgress.toBuilder()
-//            .bannerInstruction(buildBannerInstructions(step.maneuver().type(),
-//                    step.maneuver().modifier()))
-//            .build();
+    when(Objects.requireNonNull(mockedRouteProgress.currentLegProgress()).upComingStep()).thenReturn(step);
+
+    RouteProgress spyRouteProgress = Mockito.spy(mockedRouteProgress);
+    doReturn(buildBannerInstructions(step.maneuver().type(),
+            step.maneuver().modifier())).when(spyRouteProgress).bannerInstruction();
+
+    return spyRouteProgress;
   }
 
   private BannerInstructions buildBannerInstructions(String maneuverType, String maneuverModifier) {
-    BannerText bannerText = mock(BannerText.class);
-    when(bannerText.text()).thenReturn("mock text");
-    when(bannerText.type()).thenReturn(maneuverType);
-    when(bannerText.modifier()).thenReturn(maneuverModifier);
+    BannerText bannerText = BannerText.builder()
+            .text("a text")
+            .type(maneuverType)
+            .modifier(maneuverModifier)
+            .degrees(60.0)
+            .drivingSide("a driving side")
+            .build();
     return BannerInstructions.builder()
             .primary(bannerText)
             .distanceAlongGeometry(0.3f)
