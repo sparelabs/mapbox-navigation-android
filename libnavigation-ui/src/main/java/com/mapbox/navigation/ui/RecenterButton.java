@@ -104,7 +104,7 @@ public class RecenterButton extends CardView implements NavigationButton {
   @Override
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
-    clearListeners();
+    // clearListeners();
   }
 
   private void setupOnClickListeners() {
@@ -112,10 +112,8 @@ public class RecenterButton extends CardView implements NavigationButton {
   }
 
   private void clearListeners() {
-    if (multiOnClickListener !== null) {
-      multiOnClickListener.clearListeners();
-      multiOnClickListener = null;
-    }
+    multiOnClickListener.clearListeners();
+    multiOnClickListener = null;
     setOnClickListener(null);
   }
 
